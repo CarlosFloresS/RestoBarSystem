@@ -9,4 +9,8 @@ class Table extends Model
 {
     /** @use HasFactory<\Database\Factories\TableFactory> */
     use HasFactory;
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

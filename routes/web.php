@@ -13,8 +13,11 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/orders/take', [TakeOrderController::class, 'create']);
-Route::get('/orders/kitchen', [KitchenOrderController::class, 'index']);
+Route::middleware('auth')->group(function () {
+    Route::get('/orders/take/tables/{table}', [TakeOrderController::class, 'create']);
+    Route::post('/orders/take/tables/{table}', [TakeOrderController::class, 'store']);
+    Route::get('/orders/kitchen', [KitchenOrderController::class, 'index']);
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
