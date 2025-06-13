@@ -28,6 +28,22 @@ class TakeOrderController extends Controller
             'status' => 'pending',
         ]);
 
+        return $order->load('menuEntry');
+    }
+
+    public function update(Order $order, Request $request)
+    {
+        $quantity = $request->input('quantity');
+
+        // Si la cantidad es 0 o menor, eliminar el pedido
+        if ($quantity <= 0) {
+            $orderId = $order->id;
+            $order->delete();
+            return response()->json(['deleted' => true, 'id' => $orderId]);
+        }
+
+        // Si no, actualizar normalmente
+        $order->update(['quantity' => $quantity]);
         return $order;
     }
 }
