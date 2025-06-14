@@ -17,5 +17,4 @@ class Order extends Model
         return $this->belongsTo(MenuEntry::class);
     }
 
-
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\orderStatus;
 use App\Models\MenuEntry;
 use App\Models\Order;
 use App\Models\Table;
@@ -25,7 +26,7 @@ class TakeOrderController extends Controller
             'menu_entry_id' => $request->menu_entry_id,
             'quantity' => $request->quantity,
             'notes' => '',
-            'status' => 'pending',
+            'status' => orderStatus::Pending,
         ]);
 
         return $order->load('menuEntry');
@@ -33,17 +34,21 @@ class TakeOrderController extends Controller
 
     public function update(Order $order, Request $request)
     {
-        $quantity = $request->input('quantity');
+        $order->update([
+            'quantity' => $request->input('quantity', $order->quantity),
+            'notes'    => $request->input('notes',    $order->notes),
+        ]);
 
-        // Si la cantidad es 0 o menor, eliminar el pedido
-        if ($quantity <= 0) {
-            $orderId = $order->id;
+        if ($order->quantity <= 0) {
             $order->delete();
-            return response()->json(['deleted' => true, 'id' => $orderId]);
+            return response()->json(['deleted' => true]);
         }
 
-        // Si no, actualizar normalmente
-        $order->update(['quantity' => $quantity]);
-        return $order;
+        return response()->json([
+            'deleted'  => false,
+            'quantity' => $order->quantity,
+            'notes'    => $order->notes,
+        ]);
     }
+
 }

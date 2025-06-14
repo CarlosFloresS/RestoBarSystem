@@ -1,0 +1,17 @@
+[33mcommit 62e9d7b157440ea28834278831ecac31a2f13ac6[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m
+Author: Carlos A <i202225428@cibertec.edu.pe>
+Date:   Fri Jun 13 01:08:10 2025 -0500
+
+    Actulizar items en tiempo real
+
+[33mcommit b7ff3ed8d5b423dfeabcf96a8c35c5b2876e38ef[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: Carlos A <i202225428@cibertec.edu.pe>
+Date:   Thu Jun 12 19:28:20 2025 -0500
+
+    Lista desplegable, mostrar y añadir items del menu
+
+[33mcommit 482de3d753884f950fcc2eae90b98e26325817d3[m
+Author: Carlos A <i202225428@cibertec.edu.pe>
+Date:   Thu Jun 5 22:43:53 2025 -0500
+
+    Reglas y estructura, BD y maquetación
