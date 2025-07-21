@@ -20,7 +20,6 @@
                                 <div class="text-center">Acciones</div>
                             </div>
 
-                            {{-- CORRECCIÓN: Se eliminó el ':' extra después de x-for --}}
                             <template x-for="order in pendingOrders" :key="order.id">
                                 <div class="grid grid-cols-5">
                                     {{-- Añadido encadenamiento opcional para evitar errores futuros --}}
@@ -29,7 +28,7 @@
                                     <div class="text-center" x-text="order.quantity"></div>
                                     <div class="text-center" x-text="order.table?.name || 'N/A'"></div>
                                     <div class="text-center">
-                                        <button class="bg-blue-950 text-white px-5 rounded">Listo</button>
+                                        <button @click="updateOrderToPreparing(order)" class="bg-blue-950 text-white px-5 rounded">Preparar</button>
                                     </div>
                                 </div>
                             </template>
@@ -64,7 +63,7 @@
                                     <div class="text-center" x-text="order.quantity"></div>
                                     <div class="text-center" x-text="order.table?.name || 'N/A'"></div>
                                     <div class="text-center">
-                                        <button class="bg-blue-950 text-white px-5 rounded">Listo</button>
+                                        <button @click="updateOrderToCompleted(order)" class="bg-blue-950 text-white px-5 rounded">Listo</button>
                                     </div>
                                 </div>
                             </template>
@@ -95,7 +94,6 @@
                             <template x-for="order in completedOrders" :key="order.id">
                                 <div class="grid grid-cols-5">
                                     <div x-text="order.menu_entry?.name || 'N/A'"></div>
-                                    {{-- CORRECCIÓN: Se cambió "order.note" por "order.notes" --}}
                                     <div class="text-center" x-text="order.notes"></div>
                                     <div class="text-center" x-text="order.quantity"></div>
                                     <div class="text-center" x-text="order.table?.name || 'N/A'"></div>
@@ -115,7 +113,29 @@
             Alpine.data('kitchen', () => ({
                 pendingOrders: @json($pendingOrders),
                 preparingOrders: @json($preparingOrders),
-                completedOrders: @json($completedOrders)
+                completedOrders: @json($completedOrders),
+
+                updateOrderToPreparing(order) {
+                    this.updateStatusOrder(order, {status: 'preparing'})
+                        .then(response => {
+                            let index = this.pendingOrders.findIndex(pendingOrder => pendingOrder.id === order.id);
+                            this.pendingOrders.splice(index, 1);
+                            this.preparingOrders.push(response.data);
+                        });
+                },
+
+                updateOrderToCompleted(order) {
+                    this.updateStatusOrder(order, {status: 'completed'})
+                        .then(response => {
+                            let index = this.preparingOrders.findIndex(preparingOrder => preparingOrder.id === order.id);
+                            this.preparingOrders.splice(index, 1);
+                            this.completedOrders.push(response.data);
+                        })
+                },
+
+                updateStatusOrder(order, data) {
+                   return  axios.put(`/update-orders-status/` + order.id, data)
+                }
             }));
         })
     </script>
