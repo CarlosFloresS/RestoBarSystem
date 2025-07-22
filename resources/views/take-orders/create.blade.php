@@ -8,12 +8,18 @@
     <div class="pt-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="mb-6">
             <select
-                onchange="window.location.href='/orders/take/tables/'+this.value"
-                class="block w-full sm:w-1/2 md:w-1/3 mx-auto bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
-                <option value="">{{ __('Selecciona una mesa') }}</option>
+                onchange="if(this.value) { window.location.href='/orders/take/tables/'+this.value; }"
+                class="block w-full sm:w-1/2 md:w-1/3 mx-auto bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-gray-100 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+
+                <!-- Opción del placeholder (versión corregida y segura) -->
+                <option value="" disabled {{ !optional($selectedTable)->id ? 'selected' : '' }}>
+                    {{ __('Selecciona una mesa') }}
+                </option>
+
                 @foreach($tables as $table)
+                    <!-- Opciones de las mesas (versión corregida y segura) -->
                     <option value="{{ $table->id }}"
-                        {{ $selectedTable && $selectedTable->id == $table->id ? 'selected' : '' }}>
+                        {{ optional($selectedTable)->id == $table->id ? 'selected' : '' }}>
                         {{ $table->name }}
                     </option>
                 @endforeach
@@ -94,8 +100,16 @@
                     </template>
                 </div>
             </div>
+
+            <div class="py-6">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <button @click="clearTable" class="bg-blue-950 text-white px-5 rounded">Limpiar mesa</button>
+                </div>
+            </div>
         </section>
     </div>
+
+
 
     <script>
         document.addEventListener('alpine:init', () => {
@@ -133,6 +147,13 @@
                         })
                         .catch(error => console.error('Error updating order:', error));
                 },
+
+                clearTable(){
+                    axios.delete('/orders/tables/' + this.selectedTable.id)
+                        .then(response =>{
+                            this.selectedTable.orders = [];
+                        });
+                }
             }))
         })
     </script>

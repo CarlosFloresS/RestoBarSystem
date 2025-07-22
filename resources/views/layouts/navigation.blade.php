@@ -15,6 +15,19 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    @if(Auth::user()->role == \App\Enums\Role::Frontline->value)
+                        <x-nav-link :href="'/orders/take/tables'" :active="request()->routeIs('dashboard')">
+                            Tomar pedidos
+                        </x-nav-link>
+                    @endif
+
+                    @if(Auth::user()->role == \App\Enums\Role::Kitchen->value)
+                        <x-nav-link :href="'/orders/kitchen'" :active="request()->routeIs('dashboard')">
+                            Atender pedidos
+                        </x-nav-link>
+                    @endif
+
                 </div>
             </div>
 

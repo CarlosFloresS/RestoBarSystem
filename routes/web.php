@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Role;
+use App\Http\Controllers\ClearTablesController;
 use App\Http\Controllers\KitchenOrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TakeOrderController;
@@ -18,9 +19,10 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     Route::middleware(RoleMiddleware::class . ':' . Role::Frontline->value)->group(function () {
-        Route::get('/orders/take/tables/{table}', [TakeOrderController::class, 'create']);
+        Route::get('/orders/take/tables/{table?}', [TakeOrderController::class, 'create']);
         Route::post('/orders/take/tables/{table}', [TakeOrderController::class, 'store']);
         Route::put('/orders/{order}', [TakeOrderController::class, 'update']);
+        Route::delete('/orders/tables/{table}', [ClearTablesController::class, 'destroy']);
     });
 
     Route::middleware(RoleMiddleware::class . ':' . Role::Kitchen->value)->group(function () {

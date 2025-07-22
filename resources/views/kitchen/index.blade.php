@@ -111,12 +111,25 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('kitchen', () => ({
+
+                init(){
+                    setInterval(()=>{
+                        axios.get('/orders/kitchen')
+                        .then(response => {
+                            this.pendingOrders = response.data.pendingOrders;
+                            this.preparingOrders = response.data.preparingOrders;
+                            this.completedOrders = response.data.completedOrders;
+                        });
+                    }, 3000);
+                },
+
                 pendingOrders: @json($pendingOrders),
                 preparingOrders: @json($preparingOrders),
                 completedOrders: @json($completedOrders),
+                orderStatus: {!!json_encode($orderStatus)!!},
 
                 updateOrderToPreparing(order) {
-                    this.updateStatusOrder(order, {status: 'preparing'})
+                    this.updateStatusOrder(order, {status: this.orderStatus.Preparing})
                         .then(response => {
                             let index = this.pendingOrders.findIndex(pendingOrder => pendingOrder.id === order.id);
                             this.pendingOrders.splice(index, 1);
@@ -125,7 +138,7 @@
                 },
 
                 updateOrderToCompleted(order) {
-                    this.updateStatusOrder(order, {status: 'completed'})
+                    this.updateStatusOrder(order, {status: this.orderStatus.Completed})
                         .then(response => {
                             let index = this.preparingOrders.findIndex(preparingOrder => preparingOrder.id === order.id);
                             this.preparingOrders.splice(index, 1);
